@@ -65,7 +65,7 @@ abstract class AbstractTaskTests : AbstractFileTests() {
             sortAddresses("input/addr_in2.txt", "temp.txt")
             assertFileContent("temp.txt", File("input/addr_out2.txt").readLines())
         } finally {
-            File("temp.txt").delete()
+//            File("temp.txt").delete()
         }
         try {
             sortAddresses("input/addr_in3.txt", "temp.txt")

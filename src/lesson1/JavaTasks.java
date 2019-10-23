@@ -1,6 +1,10 @@
 package lesson1;
 
-import kotlin.NotImplementedError;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
 
 @SuppressWarnings("unused")
 public class JavaTasks {
@@ -34,8 +38,88 @@ public class JavaTasks {
      *
      * В случае обнаружения неверного формата файла бросить любое исключение.
      */
-    static public void sortTimes(String inputName, String outputName) {
-        throw new NotImplementedError();
+    static public void sortTimes(String inputName, String outputName) throws IOException {
+        File origFile = new File(inputName);
+        FileReader fr = new FileReader(origFile);
+        BufferedReader br = new BufferedReader(fr);
+        List<String> lines = new ArrayList<>();
+        String line;
+        while ((line = br.readLine()) != null) {
+            lines.add(line);
+        }
+        br.close();
+        List<String> am = new ArrayList<>();
+        List<String> pm = new ArrayList<>();
+        for (String str : lines){
+            if (str.contains("AM")) am.add(str);
+            else if (str.contains("PM")) pm.add(str);
+        }
+        am = timeParser(am);
+        pm = timeParser(pm);
+
+        int[] sortedAm = numSort(am);
+        int[] sortedPm = numSort(pm);
+
+        String[] finalSortedAm = formattedTime(sortedAm);
+        String[] finalSortedPm = formattedTime(sortedPm);
+
+        try(OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(outputName), StandardCharsets.UTF_8)) {
+            for (String stroke1 : finalSortedAm){
+                writer.write(stroke1 + " AM\n");
+            }
+            for (String stroke2 : finalSortedPm){
+                writer.write(stroke2 + " PM\n");
+            }
+        }
+
+
+    }
+
+    private static String[] formattedTime(int[] times){
+        String[] m = new String[times.length];
+        for (int i = 0; i < times.length; i++){
+            String wholeTime;
+            String hours;
+            if (times[i] / 3600 < 10) hours = "0" + times[i] / 3600;
+            else hours = times[i] / 3600 + "";
+            String minutes;
+            if ((times[i] - 3600 * Integer.parseInt(hours))/ 60 < 10)
+                minutes = "0" + ((times[i] - 3600 * Integer.parseInt(hours)) / 60);
+            else minutes = "" + ((times[i] - 3600 * Integer.parseInt(hours)) / 60);
+            String seconds;
+            if (times[i] - (Integer.parseInt(hours) * 3600 + Integer.parseInt(minutes) * 60) < 10)
+                seconds = "0" + (times[i] - (Integer.parseInt(hours) * 3600 + Integer.parseInt(minutes) * 60));
+            else seconds = "" + (times[i] - (Integer.parseInt(hours) * 3600 + Integer.parseInt(minutes) * 60));
+            wholeTime = hours + ":" + minutes + ":" + seconds;
+            m[i] = wholeTime;
+        }
+        return m;
+    }
+
+    private static int[] numSort(List<String> time){
+        int[] timeToInt = new int[time.size()];
+        for (int i = 0; i < time.size(); i++){
+            int ns = minutesToSeconds(time.get(i));
+            timeToInt[i] = ns;
+        }
+        Sorts.mergeSort(timeToInt);
+        return timeToInt;
+    }
+
+    private static List<String> timeParser(List<String> timeList){
+        List<String> timeOnly = new ArrayList<>();
+        for (String time : timeList){
+            String[] times = time.split(" ");
+            timeOnly.add(times[0]);
+        }
+        return timeOnly;
+    }
+
+    private static int minutesToSeconds(String time){
+        String[] timeParts = time.split(":");
+        int hours = Integer.parseInt(timeParts[0]);
+        if (hours == 12) hours = 0;
+        return hours*3600 + Integer.parseInt(timeParts[1])*60 + Integer.parseInt(timeParts[2]);
     }
 
     /**
@@ -64,8 +148,62 @@ public class JavaTasks {
      *
      * В случае обнаружения неверного формата файла бросить любое исключение.
      */
-    static public void sortAddresses(String inputName, String outputName) {
-        throw new NotImplementedError();
+    static public void sortAddresses(String inputName, String outputName) throws IOException {
+        File file = new File(inputName);
+        Map<String, List<String>> address = new HashMap<>();
+        FileReader fr = new FileReader(file);
+        BufferedReader br = new BufferedReader(new InputStreamReader(
+                new FileInputStream(inputName),
+                StandardCharsets.UTF_8));
+        List<String> lines = new ArrayList<>();
+        String line;
+        while ((line = br.readLine()) != null) {
+            lines.add(line);
+        }
+        br.close();
+        if (lines.size() < 1000000) {
+            for (String str : lines) {
+                String[] addressName = str.split(" - ");
+                if (address.containsKey(addressName[1])) {
+                    address.get(addressName[1]).add(addressName[0]);
+                } else {
+                    List<String> value = new ArrayList<>();
+                    value.add(addressName[0]);
+                    address.put(addressName[1], value);
+                }
+            }
+            for (Map.Entry<String, List<String>> entry : address.entrySet()) {
+                if (entry.getValue().size() > 1) {
+                    String[] h = entry.getValue().toArray(new String[0]);
+                    Sorts.insertionSort(h);
+                    address.put(entry.getKey(), Arrays.asList(h));
+                }
+            }
+            File sortedFile = new File(outputName);
+            Map<String, List<String>> addressSort = new TreeMap(address);
+
+            try(OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(outputName), StandardCharsets.UTF_8))
+            {
+                for (Map.Entry<String, List<String>> entry : addressSort.entrySet()) {
+                    String key = entry.getKey();
+                    List<String> names = entry.getValue();
+                    writer.write(key + " - ");
+//                    System.out.println(key + " - ");
+                    for (int i = 0; i < names.size(); i++) {
+                        writer.write(names.get(i));
+//                        System.out.println(names.get(i));
+                        if (i != names.size() - 1) {
+                            writer.write(", ");
+//
+                        }                    }
+                    writer.write("\n");
+                }
+            }
+        }
+        else {
+            System.out.println("Количество людей больше допустимого!");
+            return;
+        }
     }
 
     /**
@@ -99,7 +237,7 @@ public class JavaTasks {
      * 121.3
      */
     static public void sortTemperatures(String inputName, String outputName) {
-        throw new NotImplementedError();
+
     }
 
     /**
@@ -132,7 +270,7 @@ public class JavaTasks {
      * 2
      */
     static public void sortSequence(String inputName, String outputName) {
-        throw new NotImplementedError();
+
     }
 
     /**
@@ -150,6 +288,6 @@ public class JavaTasks {
      * Результат: second = [1 3 4 9 9 13 15 20 23 28]
      */
     static <T extends Comparable<T>> void mergeArrays(T[] first, T[] second) {
-        throw new NotImplementedError();
+
     }
 }

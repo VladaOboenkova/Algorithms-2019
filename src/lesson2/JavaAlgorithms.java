@@ -3,6 +3,10 @@ package lesson2;
 import kotlin.NotImplementedError;
 import kotlin.Pair;
 
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @SuppressWarnings("unused")
@@ -30,9 +34,41 @@ public class JavaAlgorithms {
      * Например, для приведённого выше файла результат должен быть Pair(3, 4)
      *
      * В случае обнаружения неверного формата файла бросить любое исключение.
+     *
+     *
+     * !!! Оценка ресурсоёмкости - O(N^2)!!!
      */
-    static public Pair<Integer, Integer> optimizeBuyAndSell(String inputName) {
-        throw new NotImplementedError();
+    static public Pair<Integer, Integer> optimizeBuyAndSell(String inputName) throws IOException {
+        File file = new File(inputName);
+        FileReader fr = new FileReader(file);
+        BufferedReader br = new BufferedReader(fr);
+        List<String> lines = new ArrayList<>();
+        String line;
+        while ((line = br.readLine()) != null) { // O(N)
+            lines.add(line);
+        }
+        br.close();
+        int max = -1;
+        int first = -1;
+        int second = -1;
+        int sellPosition = 0;
+        int buyPosition = 0;
+        for (int i = 0; i < lines.size(); i++){    //O(N)                 //|
+            int num = Integer.parseInt(lines.get(i));                     //| O(N^2)
+            for(int j = i + 1; j < lines.size(); j++){   // O(N-1) = O(N) //|
+                int currentDigit = Integer.parseInt(lines.get(j));
+                if (num < currentDigit){
+                    if ((currentDigit - num) > max) {
+                        max = currentDigit - num;
+                        first = num;
+                        second = currentDigit;
+                        buyPosition = j;
+                        sellPosition = i;
+                    }
+                }
+            }
+        }
+        return new Pair<>(sellPosition+1, buyPosition+1);
     }
 
     /**
@@ -99,7 +135,7 @@ public class JavaAlgorithms {
      * Если имеется несколько самых длинных общих подстрок одной длины,
      * вернуть ту из них, которая встречается раньше в строке first.
      */
-    static public String longestCommonSubstring(String firs, String second) {
+    static public String longestCommonSubstring(String first, String second) {
         throw new NotImplementedError();
     }
 
@@ -112,9 +148,31 @@ public class JavaAlgorithms {
      *
      * Справка: простым считается число, которое делится нацело только на 1 и на себя.
      * Единица простым числом не считается.
+     *
+     *
+     * !!! Оценка ресурсоёмкости - O(N^2) !!!
      */
     static public int calcPrimesNumber(int limit) {
-        throw new NotImplementedError();
+        int quantity = 0;
+        if (limit <= 1) return 0;
+        else {
+            for (int i = 2; i <= limit; i++){ // O(N) | O(N^2)
+                if (isPrime(i)){ // O(N)              |
+                    quantity++;
+                }
+            }
+        }
+        return quantity;
+    }
+
+    private static boolean isPrime(int number) {
+            if (number < 2) return false;
+            if (number == 2) return true;
+            if (number % 2 == 0) return false;
+            for (int m = 3; m <= (int) Math.sqrt((double) number); m += 2) { // O(N)
+                if (number % m == 0) return false;
+            }
+        return true;
     }
 
     /**
