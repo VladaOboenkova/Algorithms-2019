@@ -70,8 +70,8 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
      * Удаление элемента в дереве
      * Средняя
      *
-     * Оценка сложности:
-     * Оценка памяти:
+     * Оценка сложности: O(N)
+     * Оценка памяти: O(N)
      */
     @Override
     public boolean remove(Object o) {
@@ -203,8 +203,8 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
          * Поиск следующего элемента
          * Средняя
          *
-         * Оценка сложности: 
-         *  Оценка памяти:
+         * Оценка сложности: O(N)
+         * Оценка памяти: O(1)
          */
         @Override
         public T next() {
