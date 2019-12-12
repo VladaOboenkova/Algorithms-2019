@@ -1,9 +1,9 @@
 package lesson5;
 
 import kotlin.NotImplementedError;
+import lesson5.Graph.*;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class JavaGraphTasks {
@@ -36,6 +36,7 @@ public class JavaGraphTasks {
     public static List<Graph.Edge> findEulerLoop(Graph graph) {
         throw new NotImplementedError();
     }
+
 
     /**
      * Минимальное остовное дерево.
@@ -95,7 +96,7 @@ public class JavaGraphTasks {
      *
      * Эта задача может быть зачтена за пятый и шестой урок одновременно
      */
-    public static Set<Graph.Vertex> largestIndependentVertexSet(Graph graph) {
+    public static Set<Vertex> largestIndependentVertexSet(Graph graph) {
         throw new NotImplementedError();
     }
 
